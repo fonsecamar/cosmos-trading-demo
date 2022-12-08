@@ -18,7 +18,13 @@ This repository provides a code sample in .NET on how to use some Azure Cosmos D
 
 ## Configuration
 
-* <a href="https://docs.microsoft.com/en-us/azure/cosmos-db/mongodb/how-to-create-container-mongodb#portal-mongodb" target="_blank">Create a database and containers.</a>
+* <a href="https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-create#create-an-event-hub" target="_blank">Create Event Hubs</a>
+    * Create `marketdata` Event Hub
+    * Create `ems-orderstoexecute` Event Hub
+    * Create `ems-ordersexecuted` Event Hub
+    * Create `ems-executions` Event Hub
+
+* <a href="https://docs.microsoft.com/en-us/azure/cosmos-db/mongodb/how-to-create-container-mongodb#portal-mongodb" target="_blank">Create a database and containers</a>
     * Create `trading` database
     * Create `orders` container: provide `/orderId` as the **Partition key**, select `Autoscale` and provide `1000` as **Collection Max RU/s**.
     * Create `orderExecutions` container: provide `/orderId` as the **Partition key**, select `Autoscale` and provide `1000` as **Collection Max RU/s**.
