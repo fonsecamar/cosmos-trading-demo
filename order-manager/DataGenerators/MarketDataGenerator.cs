@@ -40,9 +40,7 @@ namespace order_executor.DataGenerators
         public async Task Run([TimerTrigger("0/5 * * * * *")]TimerInfo myTimer,
             [EventHub("marketdata", Connection = "ordersHubConnection")] IAsyncCollector<MarketDataFeed> outputMarketData, 
             ILogger log)
-        {
-            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
-
+        { 
             current_price = await GetCurrentPrices();
 
             if (current_price == null || current_price.summary.Count == 0) 
