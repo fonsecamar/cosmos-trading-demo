@@ -18,7 +18,7 @@ namespace order_executor.APIs
     {
         [FunctionName("GetCustomerPortfolio")]
         public static async Task<IActionResult> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "customerPortfolio/{customerId}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "customerPortfolio/{customerId}")] HttpRequest req,
             [CosmosDB(
                 databaseName: "trading",
                 containerName: "customerPortfolio",

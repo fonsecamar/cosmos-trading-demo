@@ -16,20 +16,22 @@ namespace order_executor.Processors
     /// </summary>
     public static class OrderExecutedSubscriber
     {
-        static OrderExecutedSubscriber()
-        {
-            //Instance CosmosClient
-            cosmosClient = new CosmosClient(Environment.GetEnvironmentVariable("CosmosDBConnection"), new CosmosClientOptions() { AllowBulkExecution = true });
-            container = cosmosClient.GetContainer("trading", "orders");
-        }
-
-        static CosmosClient cosmosClient;
         static Container container;
 
         [FunctionName("OrderExecutedSubscriber")]
-        public static async Task RunAsync([EventHubTrigger("ems-ordersexecuted", Connection = "ordersHubConnection")] EventData[] events,
+        public static async Task RunAsync(
+            [EventHubTrigger(
+                "ems-ordersexecuted", 
+                Connection = "ordersHubConnection")] EventData[] events,
+            [CosmosDB(
+                databaseName: "trading",
+                containerName: "orders",
+                Connection = "CosmosDBConnection")] CosmosClient cosmosClient,
             ILogger log)
         {
+            if(container == null)
+                container = cosmosClient.GetContainer("trading", "orders");
+
             //Process received events
             await Parallel.ForEachAsync(events, async (eventData, token) =>
             {
