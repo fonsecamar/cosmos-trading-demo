@@ -73,7 +73,7 @@ done
 
 cd ../order-manager
 
-func azure functionapp publish functiondemo$SUFFIX
+func azure functionapp publish functiondemo$SUFFIX --csharp
 
 echo ""
 echo "***************************************************"
