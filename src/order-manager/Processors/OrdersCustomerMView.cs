@@ -16,14 +16,6 @@ namespace order_executor.Processors
     /// </summary>
     public static class OrdersCustomerMView
     {
-        static OrdersCustomerMView()
-        {
-            //Instance CosmosClient
-            cosmosClient = new CosmosClient(Environment.GetEnvironmentVariable("CosmosDBConnection"), new CosmosClientOptions() { AllowBulkExecution = true });
-            container = cosmosClient.GetContainer("trading", "customerPortfolio");
-        }
-
-        static CosmosClient cosmosClient;
         static Container container;
 
         [FunctionName("OrdersCustomerMView")]
@@ -35,9 +27,16 @@ namespace order_executor.Processors
                 LeaseContainerPrefix = "customer-portfolio-",
                 FeedPollDelay = 5000,
                 MaxItemsPerInvocation = 100,
-                CreateLeaseContainerIfNotExists = true)]IReadOnlyList<Order> input,
+                CreateLeaseContainerIfNotExists = false)]IReadOnlyList<Order> input,
+            [CosmosDB(
+                databaseName: "trading",
+                containerName: "customerPortfolio",
+                Connection = "CosmosDBConnection")] CosmosClient cosmosClient,
             ILogger log)
         {
+            if(container == null)
+                container = cosmosClient.GetContainer("trading", "customerPortfolio");
+
             //Process received orders
             await Parallel.ForEachAsync(input, async (order, token) =>
             {

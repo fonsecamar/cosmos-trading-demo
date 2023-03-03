@@ -21,7 +21,7 @@ namespace order_executor.Processors
                 LeaseContainerPrefix = "order-publisher-",
                 FeedPollDelay = 5000,
                 MaxItemsPerInvocation = 100,
-                CreateLeaseContainerIfNotExists = true)]IReadOnlyList<Order> input,
+                CreateLeaseContainerIfNotExists = false)]IReadOnlyList<Order> input,
             [EventHub("ems-orderstoexecute", Connection = "ordersHubConnection")] IAsyncCollector<Order> outputOrdersToExecute,
             ILogger log)
         {

@@ -16,7 +16,7 @@ namespace order_executor
     {
         [FunctionName("GetStockPrice")]
         public static async Task<IActionResult> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "stock/{symbol}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "stock/{symbol}")] HttpRequest req,
             [CosmosDB(
                 databaseName: "trading",
                 containerName: "marketdata",

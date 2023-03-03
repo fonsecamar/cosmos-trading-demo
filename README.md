@@ -4,47 +4,84 @@
 
 This repository provides a code sample in .NET on how to use some Azure Cosmos DB features integrated with Azure Funcions.
 
-## Requirements
+## Requirements to deploy
+> Setup shell was tested on WSL2 (Ubuntu 22.04.2 LTS)
 
-> It's recommended to create all the resources within the same region.
+* <a href="https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt#option-1-install-with-one-command" target="_blank">Install Azure CLI</a>
 
-* <a href="https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-function-app-portal#create-a-function-app" target="_blank">Create a Function App.</a> Choose the Runtime stack accordingly (sample code provided in **.NET 6**).
+* <a href="https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local?tabs=v4%2Clinux%2Ccsharp%2Cportal%2Cbash#install-the-azure-functions-core-tools" target="_blank">Install Azure Functions Core Tools</a>
 
-* <a href="https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-dotnet?tabs=azure-portal%2Cwindows#create-account" target="_blank">Create a Cosmos DB NoSQL API (formerly Core API) account.</a>
+* <a href="https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu#install-the-sdk" target="_blank">Install .NET SDK 7.0</a>
 
-* <a href="https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-create#create-an-event-hubs-namespace" target="_blank">Create an Event Hub namespace.</a>
+* <a href="https://git-scm.com/download/linux" target="_blank">Install Git</a>
 
-* <a href="https://github.com/fonsecamar/cosmos-trading-demo.git" target="_blank">Clone this repository.</a>
+## Setup environment
 
-## Configuration
+> The setup will provision and configure all the resources required.
 
-* <a href="https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-create#create-an-event-hub" target="_blank">Create Event Hubs</a>
-    * Create `marketdata` Event Hub
-    * Create `ems-orderstoexecute` Event Hub
-    * Create `ems-ordersexecuted` Event Hub
-    * Create `ems-executions` Event Hub
+* Sign in with Azure CLI
 
-* <a href="https://docs.microsoft.com/en-us/azure/cosmos-db/mongodb/how-to-create-container-mongodb#portal-mongodb" target="_blank">Create a database and containers</a>
-    * Create `trading` database
-    * Create `orders` container: provide `/orderId` as the **Partition key**, select `Autoscale` and provide `1000` as **Collection Max RU/s**.
-    * Create `orderExecutions` container: provide `/orderId` as the **Partition key**, select `Autoscale` and provide `1000` as **Collection Max RU/s**.
-    * Create `marketdata` container: provide `/symbol` as the **Partition key**, select `Autoscale` and provide `1000` as **Collection Max RU/s**.
-    * Create `customerPortfolio` container using the SDK (<a href="https://learn.microsoft.com/en-us/azure/cosmos-db/hierarchical-partition-keys?tabs=net-v3%2Cbicep#create-new-container-with-hierarchical-partition-keys" target="_blank">Create new container with hierarchical partition keys</a>): provide `/customerId` and `/assetClass` as the **Partition keys**, select `Autoscale` and provide `1000` as **Collection Max RU/s**.
+    ```bash
+    az login
+    ```
 
-* <a href="https://docs.microsoft.com/en-us/azure/azure-functions/functions-how-to-use-azure-function-app-settings?tabs=portal" target="_blank">Configure application settings</a>
-    * CosmosDBConnection: `<your Cosmos DB connection string>`
-    * ordersHubConnection: `<your Event Hub namespace connection string>`
+* Clone the repo
+    ```bash
+    git clone https://github.com/fonsecamar/cosmos-trading-demo.git
+    cd cosmos-trading-demo/deploy/
+    ```
 
-* Deploy Function application to Azure (<a href="https://docs.microsoft.com/en-us/azure/azure-functions/functions-develop-vs-code" target="_blank">Deploy using VS Code</a>).
+* Run setup.sh with the appropriete parameters. Keep the API's URIs prompted when completed.
+
+    ```bash
+    #SAMPLE
+    #./setup.sh 00000000-0000-0000-0000-000000000000 rg-my-demo SouthCentralUS myrandomsuffix
+
+    ./setup.sh <subscription id> <resource grouop> <location> <resources suffix>
+    ```
+> Setup has some pause stages. Hit enter to continue when prompted. 
+> 
+> It takes around 3min to provision and configure resoures.
+>
+> Resources created:
+> - Eesource groups
+> - Azure Blob Storage (ADLS Gen2)
+> - Azure Cosmos DB account (1 database with 1000 RUs autoscale shared with 5 collections)
+> - Azure Event Hub standard
+> - Azure Steam Analytics job
+> - Azure Functions Consumption Plan
+> - Azure Application Insights
 
 ## Running the sample
 
 You can call Function APIs from Azure Portal or your favorite tool.
 
+1. Start Azure Stream Analytics job
+
+1. Run markerdata generator
+
+    ```bash
+    cd ../src/marketdata-generator
+    dotnet run
+    ```
+
+1. Check Cosmos DB marketdata container (updated every 15 second by Azure Stream Analytics job).
+
+4. Call GetStockPrice function
+
+    ```bash
+    #Setting variables
+    SUFFIX=<your suffix>
+
+    # Returns Stock Price by symbol
+    curl --request GET "https://functiondemo$SUFFIX.azurewebsites.net/api/stock/MSFT"
+    ```
+
 1. Call CreateOrder function
 
-    ```
-    curl --request POST 'https://<function app name>.azurewebsites.net/api/orders/create?code=<function code>' \
+    ```bash
+    # Creates an Order
+    curl --request POST "https://functiondemo$SUFFIX.azurewebsites.net/api/orders/create" \
     --header 'Content-Type: application/json' \
     --data-raw '{
         "customerId": 99999999,
@@ -57,25 +94,24 @@ You can call Function APIs from Azure Portal or your favorite tool.
 
 1. Call GetOrder function (use orderId from the previous response)
 
-    ```
-    -- Returns Order by orderId
-    curl --request GET 'https://<function app name>.azurewebsites.net/api/orders/{orderId}?code=<function code>'
+    ```bash
+    # Returns Order by orderId
+    curl --request GET "https://functiondemo$SUFFIX.azurewebsites.net/api/orders/{orderId}"
     ```
 
 1. Call GetExecutions function (use the same orderId)
 
-    ```
+    ```bash
     -- Returns Order Executions by orderId
-    curl --request GET 'https://<function app name>.azurewebsites.net/api/orders/execution/{orderId}?code=<function code>'
+    curl --request GET "https://functiondemo$SUFFIX.azurewebsites.net/api/orders/execution/{orderId}"
     ```
 
 1. Call GetCustomerPortfolio function (use customerId provided on step 1)
 
-    ```
+    ```bash
     -- Returns Customer Portfolio by customerId
-    curl --request GET 'https://<function app name>.azurewebsites.net/api/customerPortfolio/{customerId}?code=<function code>'
+    curl --request GET "https://functiondemo$SUFFIX.azurewebsites.net/api/customerPortfolio/{customerId}"
     ```
-
 <br/>
 
 # How to Contribute

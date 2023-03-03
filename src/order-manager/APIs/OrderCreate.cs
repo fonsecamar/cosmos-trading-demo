@@ -18,7 +18,7 @@ namespace order_executor.APIs
     {
         [FunctionName("OrderCreate")]
         public static async Task<IActionResult> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "orders/create")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "orders/create")] HttpRequest req,
             [CosmosDB(
                 databaseName: "trading",
                 containerName: "orders",

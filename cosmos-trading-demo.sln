@@ -3,9 +3,28 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "order-manager", "order-manager\order-manager.csproj", "{DFF9980F-7E1C-4860-8645-E0B914E7D414}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "order-manager", "src\order-manager\order-manager.csproj", "{DFF9980F-7E1C-4860-8645-E0B914E7D414}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "trading-model", "trading-model\trading-model.csproj", "{A9DC2570-4711-46C5-8551-A07BE61B79ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "trading-model", "src\trading-model\trading-model.csproj", "{A9DC2570-4711-46C5-8551-A07BE61B79ED}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scr", "scr", "{3A604EFF-FFA9-48BC-A0FB-3D12A080835E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploy", "deploy", "{56B71DCF-50BE-4ADF-B834-1724E286551E}"
+	ProjectSection(SolutionItems) = preProject
+		deploy\setup.sh = deploy\setup.sh
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infrastructure", "infrastructure", "{F12403C1-46BA-4D0C-91C7-BA86181C2E4E}"
+	ProjectSection(SolutionItems) = preProject
+		infrastructure\blob.bicep = infrastructure\blob.bicep
+		infrastructure\containerregistry.bicep = infrastructure\containerregistry.bicep
+		infrastructure\cosmos.bicep = infrastructure\cosmos.bicep
+		infrastructure\eventhub.bicep = infrastructure\eventhub.bicep
+		infrastructure\main.bicep = infrastructure\main.bicep
+		infrastructure\streamanalytics.bicep = infrastructure\streamanalytics.bicep
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "marketdata-generator", "src\marketdata-generator\marketdata-generator.csproj", "{40F74BAE-A32F-4666-870B-A041DF2EFF1A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,9 +50,22 @@ Global
 		{A9DC2570-4711-46C5-8551-A07BE61B79ED}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A9DC2570-4711-46C5-8551-A07BE61B79ED}.Release|x64.ActiveCfg = Release|Any CPU
 		{A9DC2570-4711-46C5-8551-A07BE61B79ED}.Release|x64.Build.0 = Release|Any CPU
+		{40F74BAE-A32F-4666-870B-A041DF2EFF1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40F74BAE-A32F-4666-870B-A041DF2EFF1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40F74BAE-A32F-4666-870B-A041DF2EFF1A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{40F74BAE-A32F-4666-870B-A041DF2EFF1A}.Debug|x64.Build.0 = Debug|Any CPU
+		{40F74BAE-A32F-4666-870B-A041DF2EFF1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40F74BAE-A32F-4666-870B-A041DF2EFF1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40F74BAE-A32F-4666-870B-A041DF2EFF1A}.Release|x64.ActiveCfg = Release|Any CPU
+		{40F74BAE-A32F-4666-870B-A041DF2EFF1A}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DFF9980F-7E1C-4860-8645-E0B914E7D414} = {3A604EFF-FFA9-48BC-A0FB-3D12A080835E}
+		{A9DC2570-4711-46C5-8551-A07BE61B79ED} = {3A604EFF-FFA9-48BC-A0FB-3D12A080835E}
+		{40F74BAE-A32F-4666-870B-A041DF2EFF1A} = {3A604EFF-FFA9-48BC-A0FB-3D12A080835E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {20396D8C-ADC5-4D4E-8C15-0B4ED6576CDD}
