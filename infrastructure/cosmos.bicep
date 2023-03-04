@@ -11,26 +11,31 @@ var containers = [
     name: 'orders'
     partitionKeys: ['/orderId']
     enableIndex: true
+    enableAnalyticalStore: true
   }
   {
     name: 'orderExecutions'
     partitionKeys: ['/orderId']
     enableIndex: true
+    enableAnalyticalStore: true
   }
   {
     name: 'marketdata'
     partitionKeys: ['/symbol']
     enableIndex: false
+    enableAnalyticalStore: true
   }
   {
     name: 'customerPortfolio'
     partitionKeys: ['/customerId', '/assetClass']
     enableIndex: true
+    enableAnalyticalStore: true
   }
   {
     name: 'leases'
     partitionKeys: ['/id' ]
     enableIndex: true
+    enableAnalyticalStore: false
   }
 ]
 
@@ -54,6 +59,10 @@ resource account 'Microsoft.DocumentDB/databaseAccounts@2022-05-15' = {
   properties: {
     locations: locations
     databaseAccountOfferType: 'Standard'
+    enableAnalyticalStorage: true
+    analyticalStorageConfiguration: {
+      schemaType: 'FullFidelity'
+    }
   }
 }
 
@@ -78,6 +87,7 @@ resource container 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/container
   properties: {
     resource: {
       id: config.name
+      analyticalStorageTtl: -1
       partitionKey: {
         paths: [for pk in config.partitionKeys: pk]
         kind: length(config.partitionKeys) == 1 ? 'Hash' : 'MultiHash'
