@@ -87,7 +87,8 @@ resource container 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/container
   properties: {
     resource: {
       id: config.name
-      analyticalStorageTtl: -1
+#disable-next-line BCP040
+      '${config.enableAnalyticalStore ? 'analyticalStorageTtl' : any(null)}': any(config.enableAnalyticalStore ? -1 : null)
       partitionKey: {
         paths: [for pk in config.partitionKeys: pk]
         kind: length(config.partitionKeys) == 1 ? 'Hash' : 'MultiHash'
